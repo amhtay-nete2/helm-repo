@@ -1,9 +1,30 @@
 apiVersion: v1
 entries:
+  nginx-ingress:
+  - apiVersion: v1
+    appVersion: 2.2.2
+    created: "2022-06-10T11:24:01.9352151+08:00"
+    description: NGINX Ingress Controller
+    digest: efb8223b52e375236c8efdcd2e8f275c0dd28184950cd36cad6f0e2b620f98e3
+    home: https://github.com/nginxinc/kubernetes-ingress
+    icon: https://raw.githubusercontent.com/nginxinc/kubernetes-ingress/v2.2.2/deployments/helm-chart/chart-icon.png
+    keywords:
+    - ingress
+    - nginx
+    kubeVersion: '>= 1.19.0-0'
+    maintainers:
+    - email: kubernetes@nginx.com
+      name: nginxinc
+    name: nginx-ingress
+    sources:
+    - https://github.com/nginxinc/kubernetes-ingress/tree/v2.2.2/deployments/helm-chart
+    urls:
+    - nginx-ingress-0.13.2.tgz
+    version: 0.13.2
   test-chart:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2022-06-09T15:36:01.7703837+08:00"
+    created: "2022-06-10T11:24:02.1959404+08:00"
     description: A Helm chart for Kubernetes
     digest: eef6f89cc197aafae44a6de515fb52ff82080718104a6503d1ddf9241328adbe
     name: test-chart
@@ -13,7 +34,7 @@ entries:
     version: 0.1.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2022-06-09T15:36:02.0185788+08:00"
+    created: "2022-06-10T11:24:02.4457825+08:00"
     description: A Helm chart for Kubernetes
     digest: eef6f89cc197aafae44a6de515fb52ff82080718104a6503d1ddf9241328adbe
     name: test-chart
@@ -24,7 +45,7 @@ entries:
   wowza:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2022-06-09T15:36:02.019223+08:00"
+    created: "2022-06-10T11:24:02.4477832+08:00"
     description: A Helm chart for Kubernetes
     digest: 323aa0f4d22be95a22b958ec31a5c2b3b75865ef5ad74d8e5a299dd906fb5f69
     name: wowza
@@ -32,4 +53,4 @@ entries:
     urls:
     - wowza/wowza-0.1.0.tgz
     version: 0.1.0
-generated: "2022-06-09T15:36:01.5178128+08:00"
+generated: "2022-06-10T11:24:01.9300054+08:00"
