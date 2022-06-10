@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "wowza.fullname" . }}
+  labels:
+    {{- include "wowza.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "wowza.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "wowza.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "wowza.serviceAccountName" . }}
+      hostNetwork: true
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:          
+          - name: SERVER_DNS_NAME
+            value: {{ .Values.settingsConfig.dnsName }}
+          - name: REDIS_URL
+            value: {{ .Values.settingsConfig.redisUrl }}
+          - name: RTSP_NODE_PORT
+            value: {{ .Values.service.rtsp.nodePort | quote }}
+          - name: IP_TYPE
+            value: {{ .Values.settingsConfig.ipType }}
+          - name: NODE_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: LABEL_NAME
+            value: "app.kubernetes.io/instance={{ .Release.Name }}"
+          ports:
+            - name: http
+              containerPort: 8011
+              protocol: TCP          
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: recording-data
+              mountPath: /usr/local/WowzaStreamingEngine/content
+        {{ if .Values.vodupload }}
+        - name: {{ .Values.vodupload.name }}
+          securityContext:
+            {{- toYaml .Values.vodserver.securityContext | nindent 12 }}
+          image: "{{ .Values.vodupload.image.repository }}:{{ .Values.vodupload.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.vodupload.image.pullPolicy }}
+          ports:
+            - name: vod-http
+              containerPort: 8069
+              protocol: TCP          
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: recording-data
+              mountPath: /usr/local/vod/recordings
+            - name: vod-data
+              mountPath: /usr/local/vod/content
+            - name: vod-videos
+              mountPath: /usr/local/videos
+        {{ end }}
+        {{ if .Values.vodserver }}
+        - name: {{ .Values.vodserver.name }}
+          securityContext:
+            {{- toYaml .Values.vodserver.securityContext | nindent 12 }}
+          image: "{{ .Values.vodserver.image.repository }}:{{ .Values.vodserver.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.vodserver.image.pullPolicy }}
+          ports:
+            - name: vod-server-http
+              containerPort: 8079
+              protocol: TCP          
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: vod-videos
+              mountPath: /usr/local/videos
+        {{ end }}
+      volumes:
+        - name: recording-data
+          emptyDir: {}
+        - name: vod-data
+          emptyDir: {}
+        - name: vod-videos
+          emptyDir: {}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

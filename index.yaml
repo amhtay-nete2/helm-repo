@@ -1,0 +1,35 @@
+apiVersion: v1
+entries:
+  test-chart:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-06-09T15:36:01.7703837+08:00"
+    description: A Helm chart for Kubernetes
+    digest: eef6f89cc197aafae44a6de515fb52ff82080718104a6503d1ddf9241328adbe
+    name: test-chart
+    type: application
+    urls:
+    - test-chart/abc-test-chart-0.1.0.tgz
+    version: 0.1.0
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-06-09T15:36:02.0185788+08:00"
+    description: A Helm chart for Kubernetes
+    digest: eef6f89cc197aafae44a6de515fb52ff82080718104a6503d1ddf9241328adbe
+    name: test-chart
+    type: application
+    urls:
+    - test-chart/test-chart-0.1.0.tgz
+    version: 0.1.0
+  wowza:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-06-09T15:36:02.019223+08:00"
+    description: A Helm chart for Kubernetes
+    digest: 323aa0f4d22be95a22b958ec31a5c2b3b75865ef5ad74d8e5a299dd906fb5f69
+    name: wowza
+    type: application
+    urls:
+    - wowza/wowza-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-06-09T15:36:01.5178128+08:00"

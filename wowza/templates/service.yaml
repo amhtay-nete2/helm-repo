@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ include "wowza.fullname" . }}-{{ .Values.service.rtsp.name }}"
+  labels:
+    {{- include "wowza.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.rtsp.type }}
+  ports:
+    - port: {{ .Values.service.rtsp.port }}
+      targetPort: {{ .Values.service.rtsp.port }}
+      nodePort: {{ .Values.service.rtsp.nodePort }}
+      protocol: TCP
+      name: {{ .Values.service.rtsp.name }}
+    - port: {{ .Values.service.webrtc.port }}
+      targetPort: {{ .Values.service.webrtc.port }}
+      nodePort: {{ .Values.service.webrtc.nodePort }}
+      protocol: TCP
+      name: {{ .Values.service.webrtc.name }}
+    - port: {{ .Values.service.tcp4.port }}
+      targetPort: {{ .Values.service.tcp4.nodePort }}
+      protocol: TCP
+      name: {{ .Values.service.tcp4.name }}
+  selector:
+    {{- include "wowza.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "wowza.fullname" . }}
+  labels:
+    {{- include "wowza.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: {{ .Values.service.tcp2.port }}
+      targetPort: {{ .Values.service.tcp2.targetPort }}
+      protocol: TCP
+      name: {{ .Values.service.tcp2.name }}
+    - port: {{ .Values.service.tcp4.port }}
+      targetPort: {{ .Values.service.tcp4.targetPort }}
+      protocol: TCP
+      name: {{ .Values.service.tcp4.name }}
+    - port: {{ .Values.service.tcp5.port }}
+      targetPort: {{ .Values.service.tcp5.targetPort }}
+      protocol: TCP
+      name: {{ .Values.service.tcp5.name }}
+    - port: {{ .Values.service.webrtc.port }}
+      targetPort: {{ .Values.service.webrtc.port }}
+      protocol: TCP
+      name: {{ .Values.service.webrtc.name }}
+  selector:
+    {{- include "wowza.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ include "wowza.fullname" . }}-elb"
+  labels:
+    {{- include "wowza.labels" . | nindent 4 }}
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 1935
+      targetPort: 1935
+      protocol: TCP
+      name: rtsp
+  selector:
+    {{- include "wowza.selectorLabels" . | nindent 4 }}
+---
+{{ if .Values.vodupload }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ include "wowza.fullname" . }}-{{ .Values.vodupload.name }}"
+  labels:
+    {{- include "wowza.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.vodupload.service.type }}
+  ports:
+    - port: {{ .Values.vodupload.service.tcp1.port }}
+      targetPort: {{ .Values.vodupload.service.tcp1.targetPort }}
+      protocol: TCP
+      name: {{ .Values.vodupload.service.tcp1.name }}
+  selector:
+    {{- include "wowza.selectorLabels" . | nindent 4 }}
+{{ end }}
+---
+{{ if .Values.vodserver }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ include "wowza.fullname" . }}-{{ .Values.vodserver.name }}"
+  labels:
+    {{- include "wowza.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.vodserver.service.type }}
+  ports:
+    - port: {{ .Values.vodserver.service.tcp1.port }}
+      targetPort: {{ .Values.vodserver.service.tcp1.targetPort }}
+      protocol: TCP
+      name: {{ .Values.vodserver.service.tcp1.name }}
+  selector:
+    {{- include "wowza.selectorLabels" . | nindent 4 }}
+{{ end }}
